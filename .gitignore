@@ -1,6 +1,7 @@
 /.idea/
 /vendor/
-/cache/
-/web/uploads/
+/cache/*
+/logs/*
+/web/uploads/*
 silex.log
 composer.lock
