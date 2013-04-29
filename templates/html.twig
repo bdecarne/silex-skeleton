@@ -1,0 +1,16 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block head_title %}Silex Skeleton{% endblock %}</title>
+        <link media="all" rel="stylesheet" type="text/css" href="{{ asset('/styles/globals.css') }}" />
+        {% block stylesheets %}{% endblock %}
+        <!--[if lt IE 9]><link rel="stylesheet" type="text/css" href="{{ asset('/styles/ie.css') }}" /><![endif]-->
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+        <script type="text/javascript" src="{{ asset('/scripts/jquery-1.9.1.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('/scripts/jquery.main.js') }}"></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

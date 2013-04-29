@@ -1,0 +1,6 @@
+/.idea/
+/vendor/
+/cache/
+/web/uploads/
+silex.log
+composer.lock

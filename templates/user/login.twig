@@ -1,0 +1,21 @@
+{% extends "html.twig" %}
+{% block body %}
+        <!-- login-form -->
+        <form action="{{ path('user_dologin') }}"  method="post" class="login-form">
+            <fieldset>
+                <legend>Authentification</legend>
+                {{ form_errors(form) }}
+                <div class="row">
+                    <label for="login_username">Identifiant</label>
+                    {{form_widget(form.username)}}
+                </div>
+                <div class="row">
+                    <label for="login_password">Mot de passe</label>
+                    {{form_widget(form.password)}}
+                </div>
+                <div class="row">
+                    <input type="submit" value="valider" />
+                </div>
+            </fieldset>
+        </form>
+{% endblock %}
