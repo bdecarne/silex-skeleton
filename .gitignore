@@ -6,3 +6,4 @@
 silex.log
 composer.lock
 config.yml
+!.gitkeep
