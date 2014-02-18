@@ -7,8 +7,10 @@ namespace App\Controller;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 
+
 /**
- * IndexController
+ * Class IndexController
+ * @package App\Controller
  */
 class IndexController implements ControllerProviderInterface
 {

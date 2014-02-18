@@ -15,11 +15,11 @@ use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Igorw\Silex\ConfigServiceProvider;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Entea\Twig\Extension\AssetExtension;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Provider\SwiftmailerServiceProvider;
+use Yosymfony\Silex\ConfigServiceProvider\ConfigServiceProvider;
 
 class Application extends SilexApplication
 {
@@ -30,7 +30,8 @@ class Application extends SilexApplication
         $this["debug"] = $debug;
 
         # config
-        $this->register(new ConfigServiceProvider(__DIR__ . "/../../config.json"));
+        $app->register(new ConfigServiceProvider());
+        $config = $app['configuration']->load(__DIR__ . "/../../config.yml");
 
         # services divers
         $this->register(new UrlGeneratorServiceProvider());
@@ -65,7 +66,7 @@ class Application extends SilexApplication
 
         # mail
         $this->register(new SwiftmailerServiceProvider(), array(
-            'swiftmailer.options' => isset($this['mail']) ? $this['mail'] : array()
+            'swiftmailer.options' => $config->get('mail', array())
         ));
 
         # base de donnée
@@ -73,11 +74,11 @@ class Application extends SilexApplication
             new DoctrineServiceProvider(),
             array(
                 'db.options' => array(
-                    'driver' => $this['db']['driver'],
-                    'host' => $this['db']['host'],
-                    'dbname' => $this['db']['dbname'],
-                    'user' => $this['db']['user'],
-                    'password' => $this['db']['password'],
+                    'driver' => $config['db']['driver'],
+                    'host' => $config['db']['host'],
+                    'dbname' => $config['db']['dbname'],
+                    'user' => $config['db']['user'],
+                    'password' => $config['db']['password'],
                     'driverOptions' => array(1002 => "SET NAMES 'UTF8'")
                 ),
             )
@@ -91,7 +92,7 @@ class Application extends SilexApplication
                             "type" => 'annotation',
                             "namespace" => 'App\Entity',
                             "path" => __DIR__ . '/../App/Entity',
-                            "use_simple_annotation_reader" => true
+                            "use_simple_annotation_reader" => false
                         )
                     ),
                 ),
@@ -126,9 +127,8 @@ class Application extends SilexApplication
                             "delete_cookies" => array()
                         ),
                         'users' => $this->share(function () use ($app) {
-                                //return $app['orm.em']->getRepository('App\Entity\User');
-                                return new UserRepository($app['orm.em'], $app['orm.em']->getClassMetadata('App\Entity\User'));
-                            }),
+                            return new UserRepository($app['orm.em'], $app['orm.em']->getClassMetadata('App\Entity\User'));
+                        }),
                     ),
                 ),
                 'security.access_rules' => array(
@@ -143,7 +143,7 @@ class Application extends SilexApplication
         # gestion des erreurs
         $this->error(function (\Exception $e, $code) use ($app) {
             if ($app['debug']) {
-              return;
+                return;
             }
             $page = 404 == $code ? '404.twig' : '500.twig';
             return new Response($app['twig']->render($page, array('code' => $code)), $code);

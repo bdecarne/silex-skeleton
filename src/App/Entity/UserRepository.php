@@ -1,9 +1,9 @@
 <?php
-namespace App\Entity;
 /**
  * Auteur: Blaise de Carné - blaise@concretis.com
- * Date: 10/12/12
  */
+namespace App\Entity;
+
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -11,10 +11,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Doctrine\ORM\NoResultException;
 
-class UserRepository extends EntityRepository implements UserProviderInterface {
+/**
+ * Class UserRepository
+ * @package App\Entity
+ */
+class UserRepository extends EntityRepository implements UserProviderInterface
+{
 
     /**
      * Loads the user for the given username.
+     *
+     * @param string $username
+     * @return mixed
+     * @throws \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
      */
     public function loadUserByUsername($username)
     {
@@ -35,13 +44,22 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
 
     /**
      * Loads the user for the given username.
+     *
+     * @param UserInterface $user
+     * @return bool
      */
     public function equals(UserInterface $user)
     {
         return $this->username === $user->getUsername();
     }
+
+
     /**
      * Refreshes the user for the account interface.
+     *
+     * @param UserInterface $user
+     * @return null|object
+     * @throws \Symfony\Component\Security\Core\Exception\UnsupportedUserException
      */
     public function refreshUser(UserInterface $user)
     {
@@ -52,8 +70,12 @@ class UserRepository extends EntityRepository implements UserProviderInterface {
         return $this->find($user->getId());
     }
 
+
     /**
      * Whether this provider supports the given user class
+     *
+     * @param string $class
+     * @return bool
      */
     public function supportsClass($class)
     {

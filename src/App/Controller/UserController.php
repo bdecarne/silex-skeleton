@@ -1,7 +1,6 @@
 <?php
 /**
  * Auteur: Blaise de Carné - blaise@concretis.com
- * Date: 10/12/12
  */
 namespace App\Controller;
 
@@ -12,10 +11,16 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\FormBuilder;
 
+/**
+ * Class UserController
+ * @package App\Controller
+ */
 class UserController implements ControllerProviderInterface
 {
-    /*
-     * page de login
+    /**
+     * @param Application $app
+     * @param Request $request
+     * @return mixed
      */
     public function login(Application $app, Request $request)
     {
@@ -33,8 +38,9 @@ class UserController implements ControllerProviderInterface
         return $app['twig']->render('user/login.twig', array('form' => $form->createView()));
     }
 
-    /*
-     * Controller connect
+    /**
+     * @param Application $app
+     * @return mixed
      */
     public function connect(Application $app)
     {

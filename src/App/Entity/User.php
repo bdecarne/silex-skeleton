@@ -1,28 +1,74 @@
 <?php
-namespace App\Entity;
 /**
  * Auteur: Blaise de Carné - blaise@concretis.com
- * Date: 10/12/12
  */
+namespace App\Entity;
 
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Doctrine\ORM\Mapping AS ORM;
 
 /**
- * @Entity(repositoryClass="UserRepository")
- * @Table(name="user")
+ * @ORM\Entity(repositoryClass="UserRepository")
+ * @ORM\Table(name="user")
  */
-class User implements UserInterface, \Serializable {
+class User implements AdvancedUserInterface, \Serializable
+{
     /**
-     * @Id @Column(type="integer")
-     * @GeneratedValue
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
-    /** @Column(type="string", length=32, unique=true) */
+    /**
+     * @ORM\Column(type="string", length=25, unique=true)
+     */
     private $username;
 
-    /** @Column(type="string", length=32) */
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $salt;
+
+    /**
+     * @ORM\Column(type="string", length=40)
+     */
     private $password;
+
+    /**
+     * @ORM\Column(type="string", length=60, unique=true)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->isActive = true;
+        $this->salt = md5(uniqid(null, true));
+    }
+
+    /**
+     * @param $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Returns the password used to authenticate the user.
@@ -48,23 +94,11 @@ class User implements UserInterface, \Serializable {
      */
     public function getSalt()
     {
-        return null;
+        return $this->salt;
     }
 
     /**
      * Returns the roles granted to the user.
-     *
-     * <code>
-     * public function getRoles()
-     * {
-     *     return array('ROLE_USER');
-     * }
-     * </code>
-     *
-     * Alternatively, the roles might be stored on a ``roles`` property,
-     * and populated in any number of different ways when the user object
-     * is created.
-     *
      * @return Role[] The user roles
      */
     public function getRoles()
@@ -89,19 +123,35 @@ class User implements UserInterface, \Serializable {
     }
 
     /**
-     * @param $logs
+     * @param $isActive
      */
-    public function setLogs($logs)
+    public function setIsActive($isActive)
     {
-        $this->logs = $logs;
+        $this->isActive = $isActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
     }
 
     /**
      * @return mixed
      */
-    public function getLogs()
+    public function getEmail()
     {
-        return $this->logs;
+        return $this->email;
     }
 
     /**
@@ -114,10 +164,39 @@ class User implements UserInterface, \Serializable {
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * String representation of object
-     * @link http://php.net/manual/en/serializable.serialize.php
-     * @return string the string representation of the object or null
+     * @return bool
+     */
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @see \Serializable::serialize()
      */
     public function serialize()
     {
@@ -127,13 +206,7 @@ class User implements UserInterface, \Serializable {
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Constructs the object
-     * @link http://php.net/manual/en/serializable.unserialize.php
-     * @param string $serialized <p>
-     * The string representation of the object.
-     * </p>
-     * @return void
+     * @see \Serializable::unserialize()
      */
     public function unserialize($serialized)
     {
