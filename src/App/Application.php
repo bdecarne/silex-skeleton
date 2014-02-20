@@ -33,9 +33,12 @@ class Application extends SilexApplication
         $app->register(new ConfigServiceProvider());
         $config = $app['configuration']->load(__DIR__ . "/../../config.yml");
 
-        # services divers
+        # url generator
         $this->register(new UrlGeneratorServiceProvider());
+
+        # validator
         $this->register(new ValidatorServiceProvider());
+        AnnotationRegistry::registerAutoloadNamespace("Symfony\\Component\\Validator\\Constraints", __DIR__ . "/../../vendor/symfony/validator");
 
         # templating
         $this->register(
