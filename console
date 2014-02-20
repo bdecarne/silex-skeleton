@@ -45,7 +45,7 @@ $app['console']->addCommands(array(
 
 # ajout des commandes de l'application
 $app['console']->addCommands(array(
-    // new \App\Command\ExampleCommand()
+    new \App\Command\UserAddCommand()
 ));
 
 $app['console']->run();
