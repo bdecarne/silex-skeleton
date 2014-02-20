@@ -41,6 +41,11 @@ class User implements AdvancedUserInterface, \Serializable
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $roles;
+
+    /**
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
@@ -98,12 +103,22 @@ class User implements AdvancedUserInterface, \Serializable
     }
 
     /**
+     * @param array $roles
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = implode(",", $roles);
+    }
+
+    /**
      * Returns the roles granted to the user.
      * @return Role[] The user roles
      */
     public function getRoles()
     {
-        return array('ROLE_USER');
+        $roles = explode(",", $this->roles);
+        array_push($roles, 'ROLE_USER');
+        return array_unique(array_filter($roles));
     }
 
     /**
