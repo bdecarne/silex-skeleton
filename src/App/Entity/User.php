@@ -31,7 +31,7 @@ class User implements AdvancedUserInterface, \Serializable
     private $salt;
 
     /**
-     * @ORM\Column(type="string", length=40)
+     * @ORM\Column(type="string", length=255)
      */
     private $password;
 
