@@ -37,7 +37,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface
         try {
             $user = $q->getSingleResult();
         } catch (NoResultException $e) {
-            throw new UsernameNotFoundException(sprintf('Impossible de trouver un utilisateur avec l\'identifiant "%s".', $username), null, 0, $e);
+            throw new UsernameNotFoundException(sprintf('Impossible de trouver un utilisateur avec l\'identifiant "%s".', $username));
         }
         return $user;
     }
