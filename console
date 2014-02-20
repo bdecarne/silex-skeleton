@@ -18,6 +18,7 @@ $em = $app['orm.em'];
 $helperSet = $app['console']->getHelperSet();
 $helperSet->set(new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection()), 'db');
 $helperSet->set(new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($em), 'em');
+$helperSet->set(new \Symfony\Component\Console\Helper\DialogHelper(), 'dialog');
 
 # ajout des commandes de Doctrine
 $app['console']->addCommands(array(
