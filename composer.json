@@ -19,6 +19,7 @@
         "symfony/translation": "2.3.*",
         "symfony/twig-bridge": "2.3.*",
         "symfony/validator": "2.3.*",
+        "symfony/doctrine-bridge": "2.3.*",
 
         "swiftmailer/swiftmailer": ">=4.1.2,<4.2-dev",
         "dflydev/doctrine-orm-service-provider": "1.0.*",

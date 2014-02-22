@@ -4,6 +4,7 @@
  */
 namespace App;
 
+use App\Doctrine\Common\Persistence\ManagerRegistry;
 use App\Entity\UserRepository;
 use Silex\Application as SilexApplication;
 use Silex\Provider\TwigServiceProvider;
@@ -17,6 +18,7 @@ use Silex\Provider\SecurityServiceProvider;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Entea\Twig\Extension\AssetExtension;
+use Symfony\Bridge\Doctrine\Form\DoctrineOrmExtension;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Provider\SwiftmailerServiceProvider;
 use Yosymfony\Silex\ConfigServiceProvider\ConfigServiceProvider;
@@ -39,6 +41,7 @@ class Application extends SilexApplication
         # validator
         $this->register(new ValidatorServiceProvider());
         AnnotationRegistry::registerAutoloadNamespace("Symfony\\Component\\Validator\\Constraints", __DIR__ . "/../../vendor/symfony/validator");
+        AnnotationRegistry::registerAutoloadNamespace("Symfony\\Bridge\\Doctrine\\Validator\\Constraints", __DIR__ . "/../../vendor/symfony/doctrine-bridge");
 
         # templating
         $this->register(
@@ -100,6 +103,14 @@ class Application extends SilexApplication
                     ),
                 ),
             ));
+
+        // formulaire : doctrine orm extension
+        $app['form.extensions'] = $app->share($this->extend('form.extensions', function ($extensions) use ($app) {
+            $managerRegistry = new ManagerRegistry(null, array(), array('orm.em'), null, null, 'Doctrine\ORM\Proxy\Proxy');
+            $managerRegistry->setContainer($app);
+            $extensions[] = new DoctrineOrmExtension($managerRegistry);
+            return $extensions;
+        }));
 
         # sécurité
         $this->register(
