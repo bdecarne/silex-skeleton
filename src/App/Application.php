@@ -19,6 +19,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Entea\Twig\Extension\AssetExtension;
 use Symfony\Bridge\Doctrine\Form\DoctrineOrmExtension;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\HttpFoundation\Response;
 use Silex\Provider\SwiftmailerServiceProvider;
 use Yosymfony\Silex\ConfigServiceProvider\ConfigServiceProvider;
@@ -39,9 +40,9 @@ class Application extends SilexApplication
         $this->register(new UrlGeneratorServiceProvider());
 
         # validator
-        $this->register(new ValidatorServiceProvider());
-        AnnotationRegistry::registerAutoloadNamespace("Symfony\\Component\\Validator\\Constraints", __DIR__ . "/../../vendor/symfony/validator");
-        AnnotationRegistry::registerAutoloadNamespace("Symfony\\Bridge\\Doctrine\\Validator\\Constraints", __DIR__ . "/../../vendor/symfony/doctrine-bridge");
+        $this->register(new ValidatorServiceProvider(), array(
+            'validator.validator_service_ids' => array('doctrine.orm.validator.unique' => 'security.validator.unique_entity_validator')
+        ));
 
         # templating
         $this->register(
@@ -104,13 +105,23 @@ class Application extends SilexApplication
                 ),
             ));
 
-        // formulaire : doctrine orm extension
-        $app['form.extensions'] = $app->share($this->extend('form.extensions', function ($extensions) use ($app) {
+        // doctrine ORM ManagerRegistry
+        $app['orm.manager_registry'] = $app->share(function($app) {
             $managerRegistry = new ManagerRegistry(null, array(), array('orm.em'), null, null, 'Doctrine\ORM\Proxy\Proxy');
             $managerRegistry->setContainer($app);
-            $extensions[] = new DoctrineOrmExtension($managerRegistry);
+            return $managerRegistry;
+        });
+
+        // formulaire : doctrine orm extension
+        $app['form.extensions'] = $app->share($this->extend('form.extensions', function ($extensions) use ($app) {
+            $extensions[] = new DoctrineOrmExtension($app['orm.manager_registry']);
             return $extensions;
         }));
+
+        // orm unique entity validator
+        $app['security.validator.unique_entity_validator'] = $app->share(function ($app) {
+            return new UniqueEntityValidator($app['orm.manager_registry']);
+        });
 
         # sécurité
         $this->register(
